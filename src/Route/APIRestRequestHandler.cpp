@@ -14,8 +14,9 @@
 
 namespace Route {
 
-void APIRestRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
-	routes_.at(Poco::URI(request.getURI()).getPath())();
+void APIRestRequestHandler::handleRequest(Poco::Net::HTTPServerRequest &request,
+        Poco::Net::HTTPServerResponse &response) {
+    routes_.at(Poco::URI(request.getURI()).getPath())(request, response);
 }
 
 } /* namespace Route */

@@ -6,7 +6,9 @@
  */
 
 #include "../include/APIRestRequestHandlerFactory.h"
+#include "../include/Route/APIRestRequestHandler.h"
 
-Poco::Net::HTTPRequestHandler* APIRestRequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest& request) {
-	return nullptr;
+Poco::Net::HTTPRequestHandler* APIRestRequestHandlerFactory::createRequestHandler(
+        const Poco::Net::HTTPServerRequest &request) {
+    return new Route::APIRestRequestHandler;
 }
