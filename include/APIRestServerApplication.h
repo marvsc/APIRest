@@ -8,6 +8,8 @@
 #ifndef INCLUDE_APIRESTSERVERAPPLICATION_H_
 #define INCLUDE_APIRESTSERVERAPPLICATION_H_
 
+#include <Poco/FileChannel.h>
+
 #include <Poco/Util/ServerApplication.h>
 #include <Poco/Net/HTTPRequestHandlerFactory.h>
 
@@ -34,9 +36,11 @@ public:
     }
 protected:
     int main(const std::vector<std::string> &args) override;
+    void initialize(Application& self) override;
 private:
     int port_;
     std::shared_ptr<Poco::Net::HTTPRequestHandlerFactory> router_;
+    void set_log_properties(const Poco::FileChannel& file_channel) const;
 };
 
 #endif /* INCLUDE_APIRESTSERVERAPPLICATION_H_ */
