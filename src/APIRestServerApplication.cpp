@@ -32,38 +32,3 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     std::printf("Servidor encerrado\n");
     return Poco::Util::Application::EXIT_OK;
 }
-
-void APIRestServerApplication::initialize(Application& self) {
-    loadConfiguration();
-    ServerApplication::initialize(self);
-    Poco::SplitterChannel::Ptr splitter_channel(new Poco::SplitterChannel);
-    if (config().getBool(Configuration::ConfigurationKeys::LOGGING_CHANNELS_CONSOLE, true)) {
-        if (config().getBool(Configuration::ConfigurationKeys::LOGGING_CHANNELS_CONSOLE_COLORS, false)) {
-            Poco::ColorConsoleChannel::Ptr color_console_channel(new Poco::ColorConsoleChannel);
-            splitter_channel->addChannel(color_console_channel);
-        } else {
-            Poco::ConsoleChannel::Ptr console_channel(new Poco::ConsoleChannel);
-            splitter_channel->addChannel(console_channel);
-        }
-    }
-    if (config().getBool(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE, false)) {
-        Poco::FileChannel::Ptr file_channel(new Poco::FileChannel);
-        std::map<std::string, std::function<void()>> getter = {
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_PATH, []() { config().getString(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_PATH); } },
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_ROTATION, []() { config().getString(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_ROTATION); } },
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_ARCHIVE, []() { config().getString(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_ARCHIVE); } },
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_TIMES, []() { config().getString(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_TIMES); } },
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_COMPRESS, []() { config().getBool(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_COMPRESS); } },
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_PURGE_AGE, []() { config().getString(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_PURGE_AGE); } },
-                { Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_PURGE_COUNT, []() { config().getInt(Configuration::ConfigurationKeys::LOGGING_CHANNELS_FILE_PURGE_COUNT); } }
-        };
-        for (const auto& get : getter) {
-            if (config().hasProperty(get.first)) {
-                get.second();
-            }
-        }
-        splitter_channel->addChannel(file_channel);
-    }
-    Poco::Logger::root().setChannel(splitter_channel);
-    logger().information("APIRest inicializado");
-}

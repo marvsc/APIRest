@@ -36,7 +36,6 @@ public:
     }
 protected:
     int main(const std::vector<std::string> &args) override;
-    void initialize(Application& self) override;
 private:
     int port_;
     Poco::Net::HTTPRequestHandlerFactory::Ptr router_;
