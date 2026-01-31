@@ -27,7 +27,7 @@ public:
     void set_port(int port) {
         port_ = port;
     }
-    std::shared_ptr<Poco::Net::HTTPRequestHandlerFactory> get_router() const {
+    Poco::Net::HTTPRequestHandlerFactory::Ptr get_router() const {
         return router_;
     }
     void set_router(
@@ -39,8 +39,7 @@ protected:
     void initialize(Application& self) override;
 private:
     int port_;
-    std::shared_ptr<Poco::Net::HTTPRequestHandlerFactory> router_;
-    void set_log_properties(const Poco::FileChannel& file_channel) const;
+    Poco::Net::HTTPRequestHandlerFactory::Ptr router_;
 };
 
 #endif /* INCLUDE_APIRESTSERVERAPPLICATION_H_ */
