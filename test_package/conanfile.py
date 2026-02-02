@@ -11,6 +11,7 @@ class restapiTestConan(ConanFile):
 
     def requirements(self):
         self.requires(self.tested_reference_str)
+        self.requires("restapi/0.1")
 
     def build(self):
         cmake = CMake(self)
@@ -22,5 +23,5 @@ class restapiTestConan(ConanFile):
 
     def test(self):
         if can_run(self):
-            cmd = os.path.join(self.cpp.build.bindir, "example")
+            cmd = os.path.join(self.cpp.build.bindir, "example --config APIRest.properties")
             self.run(cmd, env="conanrun")

@@ -5,3 +5,7 @@ find_package(restapi CONFIG REQUIRED)
 
 add_executable(example src/example.cpp)
 target_link_libraries(example restapi::restapi)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/configuration/APIRest.properties
+${CMAKE_CURRENT_BINARY_DIR}/APIRest.properties
+COPYONLY)
