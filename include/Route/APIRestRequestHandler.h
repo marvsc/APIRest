@@ -12,24 +12,28 @@
 #include <functional>
 
 #include <Poco/Net/HTTPRequestHandler.h>
+#include <Poco/Net/HTTPServerRequest.h>
+#include <Poco/Net/HTTPServerResponse.h>
 
 namespace Route {
 
 class APIRestRequestHandler: public Poco::Net::HTTPRequestHandler {
 public:
     APIRestRequestHandler() {}
-    APIRestRequestHandler(std::map<std::string, std::function<void()>> routes) :
-            routes_(routes) {}
+    APIRestRequestHandler(std::map<std::string, std::function<void(Poco::Net::HTTPServerRequest&,
+            Poco::Net::HTTPServerResponse&)>> routes) : routes_(routes) {}
     virtual ~APIRestRequestHandler() {
         routes_.clear();
     }
-    void add_route(const std::string &route, std::function<void()> callback) {
+    void add_route(const std::string &route, std::function<void(Poco::Net::HTTPServerRequest&,
+            Poco::Net::HTTPServerResponse&)> callback) {
         routes_.emplace(route, callback);
     }
     void handleRequest(Poco::Net::HTTPServerRequest &request,
             Poco::Net::HTTPServerResponse &response) override;
 private:
-    std::map<std::string, std::function<void()>> routes_;
+    std::map<std::string, std::function<void(Poco::Net::HTTPServerRequest&,
+            Poco::Net::HTTPServerResponse&)>> routes_;
 };
 
 } /* namespace Route */

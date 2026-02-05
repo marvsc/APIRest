@@ -44,7 +44,7 @@ private:
     int port_;
     Poco::Net::HTTPRequestHandlerFactory::Ptr router_;
 
-    static void handleConfiguration(const std::string& name, const std::string& value);
+    void handleConfiguration(const std::string& name, const std::string& value);
 };
 
 POCO_SERVER_MAIN(APIRestServerApplication)

@@ -55,6 +55,6 @@ void APIRestServerApplication::handleConfiguration(const std::string& name, cons
         Poco::Util::PropertyFileConfiguration::Ptr configuration(new Poco::Util::PropertyFileConfiguration(value));
         config().add(configuration, Poco::Util::Application::PRIO_APPLICATION + 1);
     } catch (Poco::Exception& e) {
-        std::printf("Erro definindo configuração: %s\n", e.displayText());
+        std::printf("Erro definindo configuração: %s\n", e.displayText().c_str());
     }
 }

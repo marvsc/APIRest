@@ -9,9 +9,6 @@
 
 #include <Poco/URI.h>
 
-#include <Poco/Net/HTTPServerRequest.h>
-#include <Poco/Net/HTTPServerResponse.h>
-
 namespace Route {
 
 void APIRestRequestHandler::handleRequest(Poco::Net::HTTPServerRequest &request,
