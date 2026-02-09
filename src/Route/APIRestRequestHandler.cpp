@@ -5,7 +5,7 @@
  *      Author: marcus.chaves
  */
 
-#include "../../include/Route/APIRestRequestHandler.h"
+#include "APIRestRequestHandler.h"
 
 #include <Poco/URI.h>
 
@@ -13,7 +13,11 @@ namespace Route {
 
 void APIRestRequestHandler::handleRequest(Poco::Net::HTTPServerRequest &request,
         Poco::Net::HTTPServerResponse &response) {
-    routes_.at(Poco::URI(request.getURI()).getPath())(request, response);
+    std::string path(Poco::URI(request.getURI()).getPath());
+    if (!path.empty() && path.back() == '/') {
+        path.pop_back();
+    }
+    routes_.at(path)(request, response);
 }
 
 } /* namespace Route */

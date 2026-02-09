@@ -5,8 +5,8 @@
  *      Author: marcus.chaves
  */
 
-#ifndef INCLUDE_APIRESTSERVERAPPLICATION_H_
-#define INCLUDE_APIRESTSERVERAPPLICATION_H_
+#ifndef SRC_APIRESTSERVERAPPLICATION_H_
+#define SRC_APIRESTSERVERAPPLICATION_H_
 
 #include <iostream>
 
@@ -27,16 +27,6 @@ public:
     ~APIRestServerApplication() override {
         router_.reset();
     }
-    void set_port(int port) {
-        port_ = port;
-    }
-    Poco::Net::HTTPRequestHandlerFactory::Ptr get_router() const {
-        return router_;
-    }
-    void set_router(
-            Poco::Net::HTTPRequestHandlerFactory::Ptr router) {
-        router_ = router;
-    }
 protected:
     int main(const std::vector<std::string> &args) override;
     void defineOptions(Poco::Util::OptionSet& options) override;
@@ -45,8 +35,18 @@ private:
     Poco::Net::HTTPRequestHandlerFactory::Ptr router_;
 
     void handleConfiguration(const std::string& name, const std::string& value);
+    void set_router(
+            Poco::Net::HTTPRequestHandlerFactory::Ptr router) {
+        router_ = router;
+    }
+    void set_port(int port) {
+        port_ = port;
+    }
+    Poco::Net::HTTPRequestHandlerFactory::Ptr get_router() const {
+        return router_;
+    }
 };
 
 POCO_SERVER_MAIN(APIRestServerApplication)
 
-#endif /* INCLUDE_APIRESTSERVERAPPLICATION_H_ */
+#endif /* SRC_APIRESTSERVERAPPLICATION_H_ */

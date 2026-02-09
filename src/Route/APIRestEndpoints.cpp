@@ -5,17 +5,23 @@
  *      Author: marcus.chaves
  */
 
-#include "../../include/Route/APIRestEndpoints.h"
+#include "APIRestEndpoints.h"
+#include <Poco/Logger.h>
 
 #include <Poco/JSON/Object.h>
+#include <Poco/Net/HTMLForm.h>
+#include "APIRestFilePartHandler.h"
 
 namespace Route {
 
 static const std::string CONTENT_TYPE_JSON = "application/json";
 static const std::string CONTENT_TYPE_PLAIN_TEXT = "text/plain; charset=utf-8";
 
-void APIRestEndpoints::signature(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) const {
+static Poco::Logger& logger = Poco::Logger::get("APIRestEndpoints");
+
+void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
     try {
+        receive_multipart_data(request);
         std::string body("ASSINATURA");
         response.setStatus(Poco::Net::HTTPServerResponse::HTTP_OK);
         response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
@@ -27,7 +33,7 @@ void APIRestEndpoints::signature(const Poco::Net::HTTPServerRequest& request, Po
     }
 }
 
-void APIRestEndpoints::verify(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) const {
+void APIRestEndpoints::verify(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
     try {
         Poco::JSON::Object body;
         body.set("JSON", "JSON");
@@ -42,10 +48,19 @@ void APIRestEndpoints::verify(const Poco::Net::HTTPServerRequest& request, Poco:
     }
 }
 
-void APIRestEndpoints::error(Poco::Net::HTTPServerResponse& response, const std::string& error) const {
+void APIRestEndpoints::error(Poco::Net::HTTPServerResponse& response, const std::string& error) {
     response.setStatus(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR);
     response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
     response.send().write(error.c_str(), error.size());
+}
+
+void APIRestEndpoints::receive_multipart_data(Poco::Net::HTTPServerRequest& request) {
+    APIRestFilePartHandler part_handler(DEFAULT_UPLOAD_DIRECTORY);
+    Poco::Net::HTMLForm form(request, request.stream(), part_handler);
+    logger.information("Campos do formulário:");
+    for (auto const& entry : form) {
+        logger.information("%s: %s", entry.first, entry.second);
+    }
 }
 
 } /* namespace Route */

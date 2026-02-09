@@ -1,19 +1,24 @@
 cmake_minimum_required(VERSION 3.15)
-project(restapi CXX)
+project(apirest CXX)
 
-add_library(restapi
+find_package(OpenSSL CONFIG REQUIRED)
+find_package(Poco CONFIG REQUIRED)
+
+add_executable(apirest
     src/APIRestServerApplication.cpp
     src/APIRestRequestHandlerFactory.cpp
     src/Route/APIRestRequestHandler.cpp
-    src/Route/APIRestEndpoints.cpp)
+    src/Route/APIRestEndpoints.cpp
+    src/Route/APIRestFilePartHandler.cpp)
 
-target_include_directories(restapi PUBLIC include)
+target_link_libraries(apirest PRIVATE openssl::openssl)
+target_link_libraries(apirest PRIVATE Poco::Poco)
 
-set_target_properties(restapi PROPERTIES PUBLIC_HEADER
-    "include/APIRestServerApplication.h"
-    "include/APIRestRequestHandlerFactory.h"
-    "include/Route/APIRestRequestHandler.h"
-    "include/Route/APIRestEndpoints.h"
-    "include/configuration/ConfigurationKeys.h")
+install(TARGETS apirest DESTINATION "."
+        RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        )
 
-install(TARGETS restapi)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/resource/APIRest.properties
+        DESTINATION conf/)

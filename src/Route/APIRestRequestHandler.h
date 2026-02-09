@@ -5,8 +5,8 @@
  *      Author: marcus.chaves
  */
 
-#ifndef INCLUDE_ROUTE_APIRESTREQUESTHANDLER_H_
-#define INCLUDE_ROUTE_APIRESTREQUESTHANDLER_H_
+#ifndef SRC_ROUTE_APIRESTREQUESTHANDLER_H_
+#define SRC_ROUTE_APIRESTREQUESTHANDLER_H_
 
 #include <map>
 #include <functional>
@@ -38,4 +38,4 @@ private:
 
 } /* namespace Route */
 
-#endif /* INCLUDE_ROUTE_APIRESTREQUESTHANDLER_H_ */
+#endif /* SRC_ROUTE_APIRESTREQUESTHANDLER_H_ */

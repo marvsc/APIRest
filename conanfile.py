@@ -2,10 +2,10 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 
 
-class restapiRecipe(ConanFile):
-    name = "restapi"
+class apirestRecipe(ConanFile):
+    name = "apirest"
     version = "0.1"
-    package_type = "library"
+    package_type = "application"
 
     # Optional metadata
     license = ""
@@ -16,19 +16,15 @@ class restapiRecipe(ConanFile):
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "src/*", "include/*"
+    exports_sources = "CMakeLists.txt", "src/*", "resource/*"
 
-    def config_options(self):
-        if self.settings.os == "Windows":
-            self.options.rm_safe("fPIC")
+    def requirements(self):
+        self.requires("openssl/3.6.1")
+        self.requires("poco/1.13.3")
 
     def configure(self):
-        if self.options.shared:
-            self.options.rm_safe("fPIC")
         self.options["poco"].enable_data_postgresql = False
         self.options["poco"].enable_data_mysql = False
         self.options["poco"].enable_activerecord = False
@@ -40,7 +36,6 @@ class restapiRecipe(ConanFile):
         self.options["poco"].enable_data_sqlite = False
         self.options["poco"].enable_encodings = False
         self.options["poco"].enable_fork = False
-        self.options["poco"].enable_json = False
         self.options["poco"].enable_jwt = False
         self.options["poco"].enable_mongodb = False
         self.options["poco"].enable_pagecompiler = False
@@ -55,11 +50,7 @@ class restapiRecipe(ConanFile):
 
     def layout(self):
         cmake_layout(self)
-    
-    def requirements(self):
-        self.requires("openssl/3.6.1")
-        self.requires("poco/1.13.3")
-        
+
     def generate(self):
         deps = CMakeDeps(self)
         deps.generate()
@@ -75,6 +66,6 @@ class restapiRecipe(ConanFile):
         cmake = CMake(self)
         cmake.install()
 
-    def package_info(self):
-        self.cpp_info.libs = ["restapi"]
+    
 
+    

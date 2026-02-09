@@ -5,8 +5,8 @@
  *      Author: marcus.chaves
  */
 
-#include "../include/APIRestServerApplication.h"
-#include "../include/configuration/ConfigurationKeys.h"
+#include "APIRestServerApplication.h"
+#include "APIRestRequestHandlerFactory.h"
 
 #include <functional>
 
@@ -24,6 +24,8 @@
 
 int APIRestServerApplication::main(const std::vector<std::string> &args) {
     logger().information("Inicializando APIRest");
+    set_port(DEFAULT_PORT);
+    set_router(new APIRestRequestHandlerFactory);
     auto http_server_params = new Poco::Net::HTTPServerParams();
     http_server_params->setMaxQueued(MAX_QUEUED);
     http_server_params->setMaxThreads(MAX_THREADS);
