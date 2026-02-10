@@ -4,3 +4,4 @@
 /.pydevproject
 /build/
 /CMakeUserPresets.json
+/test_package/*.sh

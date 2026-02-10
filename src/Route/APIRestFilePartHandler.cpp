@@ -28,11 +28,11 @@ void APIRestFilePartHandler::handlePart(const Poco::Net::MessageHeader& header, 
             std::string dispositions;
             Poco::Net::NameValueCollection parameters;
             Poco::Net::MessageHeader::splitParameters(header.get(CONTENT_DISPOSITION), dispositions, parameters);
-            filename_ = parameters.get(FILENAME);
-            logger.information("Recebendo arquivo: %s", filename_);
-            std::ofstream output_file_stream(upload_dir_.append("/") + filename_, std::ios::binary);
+            std::string filename(parameters.get(FILENAME));
+            logger.information("Recebendo arquivo: %s", filename);
+            std::ofstream output_file_stream(upload_dir_ + filename, std::ios::binary);
             Poco::StreamCopier::copyStream(stream, output_file_stream);
-            logger.information("Arquivo %s salvo em %s", filename_, upload_dir_);
+            logger.information("Arquivo %s salvo em %s", filename, upload_dir_);
         }
     } catch (Poco::NotFoundException& e) {
         logger.warning("O nome do arquivo não foi encontrado no cabeçalho do pacote: %s", e.message());

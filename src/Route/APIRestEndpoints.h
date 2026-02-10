@@ -8,24 +8,25 @@
 #ifndef SRC_ROUTE_APIRESTENDPOINTS_H_
 #define SRC_ROUTE_APIRESTENDPOINTS_H_
 
+#include "APIRestFilePartHandler.h"
+
 #include <string>
 
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Net/HTTPServerResponse.h>
 
-#define DEFAULT_UPLOAD_DIRECTORY "./uploads/"
+#define DEFAULT_UPLOAD_DIRECTORY "."
 
 namespace Route {
 
 class APIRestEndpoints {
 public:
-    APIRestEndpoints() {}
+    APIRestEndpoints() : file_part_handler_() {}
     virtual ~APIRestEndpoints() {}
-    static void signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-    static void verify(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response, const std::string& upload_dir);
+    void verify(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response, const std::string& upload_dir);
 private:
-    static void error(Poco::Net::HTTPServerResponse& response, const std::string& error);
-    static void receive_multipart_data(Poco::Net::HTTPServerRequest& request);
+    APIRestFilePartHandler file_part_handler_;
 };
 
 } /* namespace Route */

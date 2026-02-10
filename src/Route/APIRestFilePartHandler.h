@@ -14,13 +14,16 @@ namespace Route {
 
 class APIRestFilePartHandler : public Poco::Net::PartHandler {
 public:
-    APIRestFilePartHandler() {}
-    APIRestFilePartHandler(const std::string& upload_dir) : upload_dir_(upload_dir) {}
+    APIRestFilePartHandler() : upload_dir_("") {}
+    APIRestFilePartHandler(const std::string& upload_dir) :
+        upload_dir_(upload_dir.back() == '/' ? upload_dir : upload_dir + "/") {}
+    void set_upload_dir(const std::string& upload_dir) {
+        upload_dir_ = upload_dir;
+    }
     virtual ~APIRestFilePartHandler() {}
     void handlePart(const Poco::Net::MessageHeader& header, std::istream& stream) override;
 private:
     std::string upload_dir_;
-    std::string filename_;
 };
 
 } /* namespace Route */

@@ -30,6 +30,7 @@ public:
 protected:
     int main(const std::vector<std::string> &args) override;
     void defineOptions(Poco::Util::OptionSet& options) override;
+    void initialize(Poco::Util::Application& self) override;
 private:
     int port_;
     Poco::Net::HTTPRequestHandlerFactory::Ptr router_;

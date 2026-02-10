@@ -12,8 +12,11 @@
 
 class APIRestRequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory {
 public:
+    APIRestRequestHandlerFactory(const std::string& upload_dir);
     Poco::Net::HTTPRequestHandler* createRequestHandler(
             const Poco::Net::HTTPServerRequest &request) override;
+private:
+    std::string upload_dir_;
 };
 
 #endif /* SRC_APIRESTREQUESTHANDLERFACTORY_H_ */
