@@ -14,12 +14,14 @@ APIRestRequestHandlerFactory::APIRestRequestHandlerFactory(const std::string& up
 
 Poco::Net::HTTPRequestHandler* APIRestRequestHandlerFactory::createRequestHandler(
         const Poco::Net::HTTPServerRequest &request) {
+    auto signature = [&endpoints = endpoints_](Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
+        endpoints.signature(request, response);
+    };
+    auto verify = [&endpoints = endpoints_](Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
+        endpoints.verify(request, response);
+    };
     return new Route::APIRestRequestHandler({
-        { "/signature", [&endpoints = endpoints_](Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
-            endpoints.signature(request, response);
-        } },
-        { "/verify", [&endpoints = endpoints_](Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
-            endpoints.verify(request, response);
-        } }
+        { "/signature", signature },
+        { "/verify", verify }
     });
 }
