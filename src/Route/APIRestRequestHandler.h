@@ -21,19 +21,19 @@ class APIRestRequestHandler: public Poco::Net::HTTPRequestHandler {
 public:
     APIRestRequestHandler() {}
     APIRestRequestHandler(std::map<std::string, std::function<void(Poco::Net::HTTPServerRequest&,
-            Poco::Net::HTTPServerResponse&, const std::string&)>> routes) : routes_(routes) {}
+            Poco::Net::HTTPServerResponse&)>> routes) : routes_(routes) {}
     virtual ~APIRestRequestHandler() {
         routes_.clear();
     }
     void add_route(const std::string &route, std::function<void(Poco::Net::HTTPServerRequest&,
-            Poco::Net::HTTPServerResponse&, const std::string&)> callback) {
+            Poco::Net::HTTPServerResponse&)> callback) {
         routes_.emplace(route, callback);
     }
     void handleRequest(Poco::Net::HTTPServerRequest &request,
             Poco::Net::HTTPServerResponse &response) override;
 private:
     std::map<std::string, std::function<void(Poco::Net::HTTPServerRequest&,
-            Poco::Net::HTTPServerResponse&, const std::string&)>> routes_;
+            Poco::Net::HTTPServerResponse&)>> routes_;
 };
 
 } /* namespace Route */

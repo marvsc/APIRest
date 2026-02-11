@@ -22,9 +22,10 @@ namespace Route {
 class APIRestEndpoints {
 public:
     APIRestEndpoints() : file_part_handler_() {}
+    APIRestEndpoints(const std::string& upload_dir) : file_part_handler_(upload_dir) {}
     virtual ~APIRestEndpoints() {}
-    void signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response, const std::string& upload_dir);
-    void verify(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response, const std::string& upload_dir);
+    void signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    void verify(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 private:
     APIRestFilePartHandler file_part_handler_;
 };

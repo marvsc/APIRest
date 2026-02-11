@@ -18,8 +18,7 @@ static const std::string CONTENT_TYPE_PLAIN_TEXT = "text/plain; charset=utf-8";
 
 static Poco::Logger& logger = Poco::Logger::get("APIRestEndpoints");
 
-void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response, const std::string& upload_dir) {
-    file_part_handler_.set_upload_dir(upload_dir);
+void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
     Poco::Net::HTMLForm form(request, request.stream(), file_part_handler_);
     if (!form.empty()) {
         logger.information("Campos do formulário:");
@@ -33,8 +32,7 @@ void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Ne
     response.send().write(body.c_str(), body.size());
 }
 
-void APIRestEndpoints::verify(const Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response, const std::string& upload_dir) {
-    file_part_handler_.set_upload_dir(upload_dir);
+void APIRestEndpoints::verify(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
     Poco::JSON::Object body;
     body.set("JSON", "JSON");
     response.setStatus(Poco::Net::HTTPServerResponse::HTTP_OK);

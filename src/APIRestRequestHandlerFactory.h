@@ -8,6 +8,8 @@
 #ifndef SRC_APIRESTREQUESTHANDLERFACTORY_H_
 #define SRC_APIRESTREQUESTHANDLERFACTORY_H_
 
+#include "Route/APIRestEndpoints.h"
+
 #include <Poco/Net/HTTPRequestHandlerFactory.h>
 
 class APIRestRequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory {
@@ -16,7 +18,7 @@ public:
     Poco::Net::HTTPRequestHandler* createRequestHandler(
             const Poco::Net::HTTPServerRequest &request) override;
 private:
-    std::string upload_dir_;
+    Route::APIRestEndpoints endpoints_;
 };
 
 #endif /* SRC_APIRESTREQUESTHANDLERFACTORY_H_ */
