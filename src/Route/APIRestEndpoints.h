@@ -10,6 +10,7 @@
 
 #include "APIRestFilePartHandler.h"
 
+#include <map>
 #include <string>
 
 #include <Poco/Net/HTTPServerRequest.h>
@@ -21,13 +22,21 @@ namespace Route {
 
 class APIRestEndpoints {
 public:
-    APIRestEndpoints() : file_part_handler_() {}
-    APIRestEndpoints(const std::string& upload_dir) : file_part_handler_(upload_dir) {}
+    APIRestEndpoints() : file_part_handler_(DEFAULT_UPLOAD_DIRECTORY,
+            [&arquivos = arquivos_](const std::string& key, const std::string& value) {
+        arquivos.insert_or_assign(key, value);
+    }) {}
+    APIRestEndpoints(const std::string& upload_dir) :
+        file_part_handler_(upload_dir,
+                [&arquivos = arquivos_](const std::string& key, const std::string& value) {
+        arquivos.insert_or_assign(key, value);
+    }) {}
     virtual ~APIRestEndpoints() {}
     void signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
     void verify(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 private:
     APIRestFilePartHandler file_part_handler_;
+    std::map<std::string, std::string> arquivos_;
 };
 
 } /* namespace Route */

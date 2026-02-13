@@ -3,6 +3,7 @@ project(apirest CXX)
 
 find_package(OpenSSL CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED)
+find_package(assinaturadigital REQUIRED)
 
 add_executable(apirest
     src/APIRestServerApplication.cpp
@@ -13,6 +14,7 @@ add_executable(apirest
 
 target_link_libraries(apirest PRIVATE openssl::openssl)
 target_link_libraries(apirest PRIVATE Poco::Poco)
+target_link_libraries(apirest PRIVATE assinaturadigital::assinaturadigital)
 
 install(TARGETS apirest DESTINATION "."
         RUNTIME DESTINATION bin

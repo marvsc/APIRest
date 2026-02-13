@@ -23,6 +23,7 @@ class apirestRecipe(ConanFile):
     def requirements(self):
         self.requires("openssl/3.6.1")
         self.requires("poco/1.13.3")
+        self.requires("assinaturadigital/0.1")
 
     def configure(self):
         self.options["poco"].enable_data_postgresql = False

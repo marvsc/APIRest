@@ -17,6 +17,7 @@
 
 #define CONTENT_DISPOSITION "Content-Disposition"
 #define FILENAME "filename"
+#define KEY "name"
 
 namespace Route {
 
@@ -29,13 +30,21 @@ void APIRestFilePartHandler::handlePart(const Poco::Net::MessageHeader& header, 
             Poco::Net::NameValueCollection parameters;
             Poco::Net::MessageHeader::splitParameters(header.get(CONTENT_DISPOSITION), dispositions, parameters);
             std::string filename(parameters.get(FILENAME));
-            logger.information("Recebendo arquivo: %s", filename);
-            std::ofstream output_file_stream(upload_dir_ + filename, std::ios::binary);
+            std::string name(parameters.get(KEY));
+            logger.information("Recebendo arquivo %s do parâmetro %s", filename, name);
+            std::string file_path(upload_dir_ + filename);
+            std::ofstream output_file_stream(file_path, std::ios::binary);
             Poco::StreamCopier::copyStream(stream, output_file_stream);
             logger.information("Arquivo %s salvo em %s", filename, upload_dir_);
+            if (on_key_callback_) {
+                on_key_callback_(name, upload_dir_ + filename);
+                if (header.has(PASSWORD)) {
+                    on_key_callback_(PASSWORD, header.get(PASSWORD));
+                }
+            }
         }
     } catch (Poco::NotFoundException& e) {
-        logger.warning("O nome do arquivo não foi encontrado no cabeçalho do pacote: %s", e.message());
+        logger.warning("Parâmetro não encontrado no cabeçalho do pacote: %s", e.message());
     }
 }
 
