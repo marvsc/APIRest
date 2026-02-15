@@ -17,6 +17,7 @@
 
 #define FILE_TO_ASSIGN "File-To-Assign"
 #define CERTIFICATE "Certificate"
+#define PASSWORD "Password"
 
 namespace Route {
 
@@ -37,10 +38,7 @@ void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Ne
         std::string certificate(arquivos_.at(CERTIFICATE));
 
         logger.debug("Decodificando arquivo PKCS12 %s", certificate);
-        PKCS12Parser parser(certificate);
-        if (arquivos_.count(PASSWORD)) {
-            parser.set_password(arquivos_.at(PASSWORD));
-        }
+        PKCS12Parser parser(certificate, form.get(PASSWORD));
         parser.parse();
         std::string file_to_assign(arquivos_.at(FILE_TO_ASSIGN));
         logger.debug("Assinando arquivo %s", file_to_assign);

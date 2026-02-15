@@ -38,9 +38,6 @@ void APIRestFilePartHandler::handlePart(const Poco::Net::MessageHeader& header, 
             logger.information("Arquivo %s salvo em %s", filename, upload_dir_);
             if (on_key_callback_) {
                 on_key_callback_(name, upload_dir_ + filename);
-                if (header.has(PASSWORD)) {
-                    on_key_callback_(PASSWORD, header.get(PASSWORD));
-                }
             }
         }
     } catch (Poco::NotFoundException& e) {

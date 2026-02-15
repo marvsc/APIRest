@@ -12,8 +12,6 @@
 
 #include <Poco/Net/PartHandler.h>
 
-#define PASSWORD "Password"
-
 namespace Route {
 
 class APIRestFilePartHandler : public Poco::Net::PartHandler {
