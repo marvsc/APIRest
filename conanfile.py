@@ -4,7 +4,6 @@ from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 
 class apirestRecipe(ConanFile):
     name = "apirest"
-    version = "0.1"
     package_type = "application"
 
     # Optional metadata
@@ -21,9 +20,9 @@ class apirestRecipe(ConanFile):
     exports_sources = "CMakeLists.txt", "src/*", "resource/*"
 
     def requirements(self):
-        self.requires("openssl/3.6.1")
-        self.requires("poco/1.13.3")
-        self.requires("assinaturadigital/0.1")
+        self.requires("openssl/[>3.6.1]")
+        self.requires("poco/[>1.13.3]")
+        self.requires("assinaturadigital/[>v0.1.1]")
 
     def configure(self):
         self.options["poco"].enable_data_postgresql = False

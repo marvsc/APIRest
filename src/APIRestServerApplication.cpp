@@ -10,6 +10,8 @@
 #include "Configuration/APIRestConfigurationKeys.h"
 
 #include <functional>
+#include <fstream>
+#include <OpenSSLUtils.h>
 
 #include <Poco/Logger.h>
 #include <Poco/ConsoleChannel.h>
@@ -19,11 +21,16 @@
 #include <Poco/File.h>
 
 #include <Poco/Net/HTTPServer.h>
+#include <Poco/Net/SSLManager.h>
+#include <Poco/Net/Context.h>
+#include <Poco/Net/SecureServerSocket.h>
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/PropertyFileConfiguration.h>
+#include <Poco/Crypto/PKCS12Container.h>
 
 #define MAX_QUEUED 250
 #define MAX_THREADS 50
+#define DEFAULT_BACKLOG 64
 
 void APIRestServerApplication::initialize(Poco::Util::Application& self) {
     try {
@@ -49,13 +56,33 @@ void APIRestServerApplication::initialize(Poco::Util::Application& self) {
 
 int APIRestServerApplication::main(const std::vector<std::string> &args) {
     logger().information("Inicializando APIRest");
+    Poco::Net::SSLManager::instance().initializeServer(nullptr, nullptr, nullptr);
+    if (!config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PATH)) {
+        logger().error("Certificado PKCS 12 não configurado, parando servidor");
+        return Poco::Util::Application::EXIT_CONFIG;
+    }
+    std::ifstream pkcs12_stream(config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PATH), std::ios::binary);
+    Poco::AutoPtr<Poco::Crypto::PKCS12Container> container;
+    if (config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_256_CBC_BASE64)
+            && config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_KEY)
+            && config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSOWRD_INITIALIZATION_VECTOR)) {
+        container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream,
+                OpenSSLUtils::decrypt_aes_256_cbc(config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_256_CBC_BASE64),
+                        config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_KEY),
+                        reinterpret_cast<const unsigned char*>(config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSOWRD_INITIALIZATION_VECTOR).c_str()))));
+    } else {
+        container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream));
+    }
+    Poco::Net::Context::Ptr context(new Poco::Net::Context(Poco::Net::Context::SERVER_USE, "", Poco::Net::Context::VERIFY_STRICT));
+    context->useCertificate(container->getX509Certificate());
+    context->usePrivateKey(container->getKey());
     set_port(DEFAULT_PORT);
     set_router(new APIRestRequestHandlerFactory(config().getString(Configuration::APIRestConfigurationKeys::APIREST_UPLOAD_DIR)));
     auto http_server_params = new Poco::Net::HTTPServerParams();
     http_server_params->setMaxQueued(MAX_QUEUED);
     http_server_params->setMaxThreads(MAX_THREADS);
     Poco::Net::HTTPServer http_server(get_router(),
-            Poco::Net::ServerSocket(Poco::UInt16(port_)), http_server_params);
+            Poco::Net::SecureServerSocket(Poco::UInt16(port_), DEFAULT_BACKLOG, context), http_server_params);
     logger().information("Servidor iniciado na porta %d", port_);
     http_server.start();
     waitForTerminationRequest();
