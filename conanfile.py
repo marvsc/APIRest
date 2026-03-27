@@ -20,7 +20,7 @@ class apirestRecipe(ConanFile):
     exports_sources = "CMakeLists.txt", "src/*", "resource/*"
 
     def requirements(self):
-        self.requires("openssl/[>3.6.1]")
+        self.requires("openssl/[>3.5.0]")
         self.requires("poco/[>1.13.3]")
         self.requires("assinaturadigital/[>v0.1.1]")
 

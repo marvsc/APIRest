@@ -62,7 +62,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
         return Poco::Util::Application::EXIT_CONFIG;
     }
     std::ifstream pkcs12_stream(config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PATH), std::ios::binary);
-    Poco::AutoPtr<Poco::Crypto::PKCS12Container> container;
+    std::unique_ptr<Poco::Crypto::PKCS12Container> container(nullptr);
     if (config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_256_CBC_BASE64)
             && config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_KEY)
             && config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSOWRD_INITIALIZATION_VECTOR)) {
