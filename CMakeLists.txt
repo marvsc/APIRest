@@ -12,13 +12,20 @@ add_executable(apirest
 
 target_link_libraries(apirest PRIVATE assinaturadigital::assinaturadigital)
 
-target_compile_definitions(apirest PRIVATE POCO_STATIC)
-
 install(TARGETS apirest DESTINATION "."
         RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         )
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/resource/APIRest.properties
+set(CONFIGURE_PATH ${CMAKE_INSTALL_PREFIX}/conf)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/resource/APIRest.properties.in
+    conf/APIRest.properties
+    @ONLY
+)
+
+install(FILES
+            ${CMAKE_CURRENT_SOURCE_DIR}/resource/certificado_teste_hub.pfx
+            ${CMAKE_BINARY_DIR}/conf/APIRest.properties
         DESTINATION conf/)

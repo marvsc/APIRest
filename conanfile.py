@@ -47,6 +47,7 @@ class apirestRecipe(ConanFile):
         self.options["poco"].enable_xml = False
         self.options["poco"].enable_zip = False
         self.options["poco"].enable_prometheus = False
+        self.options["openssl"].no_module = True
 
     def layout(self):
         cmake_layout(self)

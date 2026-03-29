@@ -32,7 +32,7 @@ logging.channels.splitter.channel = console, file
 
 ; API Rest
 apirest.upload.dir = /tmp/apirest/uploads
-apirest.pkcs12.path = certificado_teste_hub.pfx
+apirest.pkcs12.path = @CONFIGURE_PATH@/certificado_teste_hub.pfx
 apirest.pkcs12.password.aes.256.cbc.base64 = dKSJy+f3FMjtyG1ynWG2fg==
 apirest.pkcs12.password.aes.key = b90XmFVR51L485rxXXCRhupVxva0yDFh
 apirest.pkcs12.passowrd.aes.initialization.vector = NSVmgGXSm2jRTiyq
