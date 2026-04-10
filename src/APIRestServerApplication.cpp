@@ -78,6 +78,10 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
         container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream));
     }
     Poco::Net::Context::Ptr context(new Poco::Net::Context(Poco::Net::Context::SERVER_USE, "", Poco::Net::Context::VERIFY_STRICT));
+    Poco::Crypto::X509Certificate::List ca_cert_chain(OpenSSLUtils::get_ca_cert_chain(container->getX509Certificate().certificate()));
+    for (Poco::Crypto::X509Certificate ca_cert : ca_cert_chain) {
+        context->addCertificateAuthority(ca_cert);
+    }
     context->useCertificate(container->getX509Certificate());
     context->usePrivateKey(container->getKey());
     set_port(DEFAULT_PORT);

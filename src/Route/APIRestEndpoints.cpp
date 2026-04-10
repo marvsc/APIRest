@@ -7,14 +7,12 @@
 
 #include "APIRestEndpoints.h"
 
-#include <PKCS12Parser.h>
 #include <CMSSigner.h>
 
 #include <Poco/Logger.h>
 
 #include <Poco/JSON/Object.h>
 #include <Poco/Net/HTMLForm.h>
-#include <Data/POCO/PKCS12POCO.h>
 
 #define FILE_TO_ASSIGN "File-To-Assign"
 #define CERTIFICATE "Certificate"
@@ -37,13 +35,10 @@ void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Ne
             logger.debug("%s : %s", entry.first, entry.second);
         }
         std::string certificate(arquivos_.at(CERTIFICATE));
-
         logger.debug("Decodificando arquivo PKCS12 %s", certificate);
-        PKCS12Parser parser(certificate, form.get(PASSWORD));
-        std::unique_ptr<Data::POCO::PKCS12POCO> pkcs12_poco(std::move(parser.parse()));
         std::string file_to_assign(arquivos_.at(FILE_TO_ASSIGN));
         logger.debug("Assinando arquivo %s", file_to_assign);
-        CMSSigner signer(file_to_assign, pkcs12_poco->certificate.get(), pkcs12_poco->private_key.get());
+        CMSSigner signer(file_to_assign, arquivos_.at(CERTIFICATE), form.get(PASSWORD));
         std::string body(signer.assign());
         response.setStatus(Poco::Net::HTTPServerResponse::HTTP_OK);
         response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
