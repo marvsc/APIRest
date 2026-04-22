@@ -56,6 +56,8 @@ void APIRestServerApplication::initialize(Poco::Util::Application& self) {
 
 int APIRestServerApplication::main(const std::vector<std::string> &args) {
     logger().information("Inicializando APIRest");
+    setenv("POCO_SSL_DEBUG", "3", 1);
+    Poco::Net::initializeSSL();
     Poco::Net::SSLManager::instance().initializeServer(nullptr, nullptr, nullptr);
     if (!config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PATH)) {
         logger().error("Certificado PKCS 12 não configurado, parando servidor");
@@ -78,8 +80,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
         container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream));
     }
     Poco::Net::Context::Ptr context(new Poco::Net::Context(Poco::Net::Context::SERVER_USE, "", Poco::Net::Context::VERIFY_STRICT));
-    Poco::Crypto::X509Certificate::List ca_cert_chain(OpenSSLUtils::get_ca_cert_chain(container->getX509Certificate().certificate()));
-    for (Poco::Crypto::X509Certificate ca_cert : ca_cert_chain) {
+    for (Poco::Crypto::X509Certificate ca_cert : container->getCACerts()) {
         context->addCertificateAuthority(ca_cert);
     }
     context->useCertificate(container->getX509Certificate());
@@ -89,6 +90,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     auto http_server_params = new Poco::Net::HTTPServerParams();
     http_server_params->setMaxQueued(MAX_QUEUED);
     http_server_params->setMaxThreads(MAX_THREADS);
+    context->enableSessionCache(true);
     Poco::Net::HTTPServer http_server(get_router(),
             Poco::Net::SecureServerSocket(Poco::UInt16(port_), DEFAULT_BACKLOG, context), http_server_params);
     logger().information("Servidor iniciado na porta %d", port_);
