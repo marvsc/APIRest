@@ -27,6 +27,7 @@
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/PropertyFileConfiguration.h>
 #include <Poco/Crypto/PKCS12Container.h>
+#include <Poco/Net/AcceptCertificateHandler.h>
 
 #define MAX_QUEUED 250
 #define MAX_THREADS 50
@@ -58,7 +59,6 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     logger().information("Inicializando APIRest");
     setenv("POCO_SSL_DEBUG", "3", 1);
     Poco::Net::initializeSSL();
-    Poco::Net::SSLManager::instance().initializeServer(nullptr, nullptr, nullptr);
     if (!config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PATH)) {
         logger().error("Certificado PKCS 12 não configurado, parando servidor");
         return Poco::Util::Application::EXIT_CONFIG;
@@ -85,6 +85,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     }
     context->useCertificate(container->getX509Certificate());
     context->usePrivateKey(container->getKey());
+    Poco::Net::SSLManager::instance().initializeServer(nullptr, new Poco::Net::AcceptCertificateHandler(false), context);
     set_port(DEFAULT_PORT);
     set_router(new APIRestRequestHandlerFactory(config().getString(Configuration::APIRestConfigurationKeys::APIREST_UPLOAD_DIR)));
     auto http_server_params = new Poco::Net::HTTPServerParams();
