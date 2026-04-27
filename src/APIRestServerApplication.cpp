@@ -7,6 +7,9 @@
 
 #include "APIRestServerApplication.h"
 #include "APIRestRequestHandlerFactory.h"
+#include "MyDetailedHandler.h"
+#include "MyErrorHandler.h"
+
 #include "Configuration/APIRestConfigurationKeys.h"
 
 #include <functional>
@@ -19,15 +22,16 @@
 #include <Poco/SplitterChannel.h>
 #include <Poco/Path.h>
 #include <Poco/File.h>
+#include <Poco/ErrorHandler.h>
 
 #include <Poco/Net/HTTPServer.h>
 #include <Poco/Net/SSLManager.h>
 #include <Poco/Net/Context.h>
+#include <Poco/Net/SocketAddress.h>
 #include <Poco/Net/SecureServerSocket.h>
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/PropertyFileConfiguration.h>
 #include <Poco/Crypto/PKCS12Container.h>
-#include <Poco/Net/AcceptCertificateHandler.h>
 
 #define MAX_QUEUED 250
 #define MAX_THREADS 50
@@ -57,6 +61,8 @@ void APIRestServerApplication::initialize(Poco::Util::Application& self) {
 
 int APIRestServerApplication::main(const std::vector<std::string> &args) {
     logger().information("Inicializando APIRest");
+    Poco::ErrorHandler* pEH = new MyErrorHandler;
+    Poco::ErrorHandler::set(pEH);
     setenv("POCO_SSL_DEBUG", "3", 1);
     Poco::Net::initializeSSL();
     if (!config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PATH)) {
@@ -80,12 +86,18 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
         container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream));
     }
     Poco::Net::Context::Ptr context(new Poco::Net::Context(Poco::Net::Context::SERVER_USE, "", Poco::Net::Context::VERIFY_STRICT));
-    for (Poco::Crypto::X509Certificate ca_cert : container->getCACerts()) {
-        context->addCertificateAuthority(ca_cert);
-    }
-    context->useCertificate(container->getX509Certificate());
-    context->usePrivateKey(container->getKey());
-    Poco::Net::SSLManager::instance().initializeServer(nullptr, new Poco::Net::AcceptCertificateHandler(false), context);
+//    for (Poco::Crypto::X509Certificate ca_cert : container->getCACerts()) {
+//        context->addCertificateAuthority(ca_cert);
+//    }
+//    context->useCertificate(container->getX509Certificate());
+//    context->usePrivateKey(container->getKey());
+    Poco::Crypto::X509Certificate cacert("/home/marcus/certificados/cacert.crt");
+    Poco::Crypto::X509Certificate certificate("/home/marcus/certificados/server.crt");
+    Poco::Crypto::EVPPKey pkey("/home/marcus/certificados/server.crt", "/home/marcus/certificados/server.key");
+    context->addCertificateAuthority(cacert);
+    context->useCertificate(certificate);
+    context->usePrivateKey(pkey);
+    Poco::Net::SSLManager::instance().initializeServer(nullptr, new MyDetailedHandler(true), context);
     set_port(DEFAULT_PORT);
     set_router(new APIRestRequestHandlerFactory(config().getString(Configuration::APIRestConfigurationKeys::APIREST_UPLOAD_DIR)));
     auto http_server_params = new Poco::Net::HTTPServerParams();
@@ -93,7 +105,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     http_server_params->setMaxThreads(MAX_THREADS);
     context->enableSessionCache(true);
     Poco::Net::HTTPServer http_server(get_router(),
-            Poco::Net::SecureServerSocket(Poco::UInt16(port_), DEFAULT_BACKLOG, context), http_server_params);
+            Poco::Net::SecureServerSocket(Poco::Net::SocketAddress("terra", Poco::UInt16(port_)), DEFAULT_BACKLOG, context), http_server_params);
     logger().information("Servidor iniciado na porta %d", port_);
     http_server.start();
     waitForTerminationRequest();
