@@ -8,8 +8,6 @@
 #include "APIRestServerApplication.h"
 #include "APIRestRequestHandlerFactory.h"
 #include "MyDetailedHandler.h"
-#include "MyErrorHandler.h"
-
 #include "Configuration/APIRestConfigurationKeys.h"
 
 #include <functional>
@@ -32,6 +30,7 @@
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/PropertyFileConfiguration.h>
 #include <Poco/Crypto/PKCS12Container.h>
+#include "APIRestErrorHandler.h"
 
 #define MAX_QUEUED 250
 #define MAX_THREADS 50
@@ -86,17 +85,11 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
         container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream));
     }
     Poco::Net::Context::Ptr context(new Poco::Net::Context(Poco::Net::Context::SERVER_USE, "", Poco::Net::Context::VERIFY_STRICT));
-//    for (Poco::Crypto::X509Certificate ca_cert : container->getCACerts()) {
-//        context->addCertificateAuthority(ca_cert);
-//    }
-//    context->useCertificate(container->getX509Certificate());
-//    context->usePrivateKey(container->getKey());
-    Poco::Crypto::X509Certificate cacert("/home/marcus/certificados/cacert.crt");
-    Poco::Crypto::X509Certificate certificate("/home/marcus/certificados/server.crt");
-    Poco::Crypto::EVPPKey pkey("/home/marcus/certificados/server.crt", "/home/marcus/certificados/server.key");
-    context->addCertificateAuthority(cacert);
-    context->useCertificate(certificate);
-    context->usePrivateKey(pkey);
+    for (Poco::Crypto::X509Certificate ca_cert : container->getCACerts()) {
+        context->addCertificateAuthority(ca_cert);
+    }
+    context->useCertificate(container->getX509Certificate());
+    context->usePrivateKey(container->getKey());
     Poco::Net::SSLManager::instance().initializeServer(nullptr, new MyDetailedHandler(true), context);
     set_port(DEFAULT_PORT);
     set_router(new APIRestRequestHandlerFactory(config().getString(Configuration::APIRestConfigurationKeys::APIREST_UPLOAD_DIR)));
@@ -105,7 +98,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     http_server_params->setMaxThreads(MAX_THREADS);
     context->enableSessionCache(true);
     Poco::Net::HTTPServer http_server(get_router(),
-            Poco::Net::SecureServerSocket(Poco::Net::SocketAddress("terra", Poco::UInt16(port_)), DEFAULT_BACKLOG, context), http_server_params);
+            Poco::Net::SecureServerSocket(Poco::Net::SocketAddress("D1385.digitro.corp", Poco::UInt16(port_)), DEFAULT_BACKLOG, context), http_server_params);
     logger().information("Servidor iniciado na porta %d", port_);
     http_server.start();
     waitForTerminationRequest();
