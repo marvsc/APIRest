@@ -6,8 +6,7 @@ find_package(assinaturadigital CONFIG REQUIRED)
 add_executable(apirest
     src/APIRestServerApplication.cpp
     src/APIRestRequestHandlerFactory.cpp
-    src/MyDetailedHandler.cpp
-    src/MyErrorHandler.cpp
+    src/APIRestErrorHandler.cpp
     src/Route/APIRestRequestHandler.cpp
     src/Route/APIRestEndpoints.cpp
     src/Route/APIRestFilePartHandler.cpp)

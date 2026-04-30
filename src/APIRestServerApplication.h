@@ -10,11 +10,9 @@
 
 #include <iostream>
 
-#include <Poco/FileChannel.h>
-
+#include <Poco/Util/OptionSet.h>
 #include <Poco/Util/ServerApplication.h>
 #include <Poco/Net/HTTPRequestHandlerFactory.h>
-#include <Poco/Util/OptionSet.h>
 
 #define DEFAULT_PORT 9000
 
