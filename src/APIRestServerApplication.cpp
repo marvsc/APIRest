@@ -25,7 +25,9 @@
 #include <Poco/Net/SecureServerSocket.h>
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/PropertyFileConfiguration.h>
+#include <Poco/Crypto/Crypto.h>
 #include <Poco/Crypto/PKCS12Container.h>
+#include <Poco/Crypto/RSACipherImpl.h>
 
 #define MAX_QUEUED 250
 #define MAX_THREADS 50
@@ -121,3 +123,14 @@ void APIRestServerApplication::handleConfiguration(const std::string& name, cons
         std::printf("Erro definindo configuração: %s\n", e.displayText().c_str());
     }
 }
+
+std::string APIRestServerApplication::decrypt_password(const std::string& encrypted_password) {
+    std::string private_key_path(Poco::Path::home().append(".ssh/id_rsa"));
+    Poco::Crypto::RSAKey private_key_ssh("", private_key_path);
+    std::stringstream pem_stream;
+    private_key_ssh.save(nullptr, &pem_stream);
+    Poco::Crypto::RSAKey private_key_rsa(nullptr, &pem_stream);
+    Poco::Crypto::RSACipherImpl cipher(private_key_rsa, RSAPaddingMode::RSA_PADDING_PKCS1);
+    return cipher.decryptString(encrypted_password, Poco::Crypto::Cipher::ENC_BASE64);
+}
+

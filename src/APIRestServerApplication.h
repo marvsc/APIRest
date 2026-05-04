@@ -44,6 +44,7 @@ private:
     Poco::Net::HTTPRequestHandlerFactory::Ptr get_router() const {
         return router_;
     }
+    static std::string decrypt_password(const std::string& encrypted_password);
 };
 
 POCO_SERVER_MAIN(APIRestServerApplication)
