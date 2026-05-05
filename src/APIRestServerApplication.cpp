@@ -32,6 +32,8 @@
 #define MAX_QUEUED 250
 #define MAX_THREADS 50
 #define DEFAULT_BACKLOG 64
+#define AES_KEY "b90XmFVR51L485rxXXCRhupVxva0yDFh"
+#define AES_INITIALIZATION_VECTOR "NSVmgGXSm2jRTiyq"
 
 void APIRestServerApplication::initialize(Poco::Util::Application& self) {
     try {
@@ -69,14 +71,10 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
         return Poco::Util::Application::EXIT_CONFIG;
     }
     std::unique_ptr<Poco::Crypto::PKCS12Container> container(nullptr);
-    // FIXME: Senha, chave e vetor de inicialização não podem ficar no mesmo lugar
-    if (config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_256_CBC_BASE64)
-            && config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_KEY)
-            && config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSOWRD_INITIALIZATION_VECTOR)) {
+    if (config().has(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_256_CBC_BASE64)) {
         container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream,
                 OpenSSLUtils::decrypt_aes_256_cbc(config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_256_CBC_BASE64),
-                        config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSWORD_AES_KEY),
-                        reinterpret_cast<const unsigned char*>(config().getString(Configuration::APIRestConfigurationKeys::APIREST_PKCS12_PASSOWRD_INITIALIZATION_VECTOR).c_str()))));
+                        AES_KEY, reinterpret_cast<const unsigned char*>(AES_INITIALIZATION_VECTOR))));
     } else {
         container.reset(new Poco::Crypto::PKCS12Container(pkcs12_stream));
     }
@@ -124,13 +122,4 @@ void APIRestServerApplication::handleConfiguration(const std::string& name, cons
     }
 }
 
-std::string APIRestServerApplication::decrypt_password(const std::string& encrypted_password) {
-    std::string private_key_path(Poco::Path::home().append(".ssh/id_rsa"));
-    Poco::Crypto::RSAKey private_key_ssh("", private_key_path);
-    std::stringstream pem_stream;
-    private_key_ssh.save(nullptr, &pem_stream);
-    Poco::Crypto::RSAKey private_key_rsa(nullptr, &pem_stream);
-    Poco::Crypto::RSACipherImpl cipher(private_key_rsa, RSAPaddingMode::RSA_PADDING_PKCS1);
-    return cipher.decryptString(encrypted_password, Poco::Crypto::Cipher::ENC_BASE64);
-}
 

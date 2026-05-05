@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 
+#include <Poco/Net/HTMLForm.h>
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Net/HTTPServerResponse.h>
 
@@ -37,6 +38,8 @@ public:
 private:
     APIRestFilePartHandler file_part_handler_;
     std::map<std::string, std::string> arquivos_;
+
+    const Poco::Net::HTMLForm get_form_data(Poco::Net::HTTPServerRequest& request);
 };
 
 } /* namespace Route */
