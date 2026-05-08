@@ -14,6 +14,7 @@
 #include <Poco/Logger.h>
 
 #include <Poco/JSON/Object.h>
+#include <Poco/JSON/Array.h>
 
 #define FILE_TO_ASSIGN "File-To-Assign"
 #define CERTIFICATE "Certificate"
@@ -39,10 +40,16 @@ void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Ne
         response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
         response.send().write(body.c_str(), body.size());
         arquivos_.clear();
+    } catch (Poco::Exception& e) {
+        response.setStatus(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
+        response.send().write(e.displayText().c_str(), e.displayText().length());
+        logger.error("Erro no processo de assinatura de arquivo: %s", e.displayText());
     } catch (std::exception& e) {
         response.setStatus(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR);
         response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
         response.send().write(e.what(), std::strlen(e.what()));
+        logger.error("Erro no processo de assinatura de arquivo: %s", std::string(e.what()));
     }
 }
 
@@ -53,13 +60,28 @@ void APIRestEndpoints::verify(Poco::Net::HTTPServerRequest& request, Poco::Net::
         std::string file_to_verify(arquivos_.at(FILE_TO_VERIFY));
         logger.debug("Verificando assinatura do arquivo %s com o certificado %s", file_to_verify, certificate);
         SignatureRetriever signature_retriever(certificate, form->get(PASSWORD), file_to_verify);
-        Poco::JSON::Object body;
+        Poco::JSON::Object body(Poco::JSON_PRESERVE_KEY_ORDER);
         if (signature_retriever.verify()) {
             body.set(STATUS, VALID);
-            body.set(SIGNER_NAME, signature_retriever.get_signer_names());
-            body.set(SIGNING_DATE, signature_retriever.get_signing_times());
+            std::set<std::string> names = signature_retriever.get_signer_names();
+            Poco::JSON::Array json_names;
+            for (std::string name : names) {
+                json_names.add(name);
+            }
+            body.set(SIGNER_NAME, json_names);
+            std::set<std::string> times = signature_retriever.get_signing_times();
+            Poco::JSON::Array json_times;
+            for (std::string time : times) {
+                json_times.add(time);
+            }
+            body.set(SIGNING_DATE, json_times);
             body.set(HASH, signature_retriever.get_hash());
-            body.set(ALGORITHM_NAME, signature_retriever.get_algorithms());
+            std::set<std::string> algorithms = signature_retriever.get_algorithms();
+            Poco::JSON::Array json_algorithms;
+            for (std::string algorithm : algorithms) {
+                json_algorithms.add(algorithm);
+            }
+            body.set(ALGORITHM_NAME, json_algorithms);
         } else {
             body.set(STATUS, INVALID);
         }
@@ -67,10 +89,17 @@ void APIRestEndpoints::verify(Poco::Net::HTTPServerRequest& request, Poco::Net::
         response.setContentType(CONTENT_TYPE_JSON);
         std::ostream& response_stream = response.send();
         body.stringify(response_stream);
+        arquivos_.clear();
+    } catch (Poco::Exception& e) {
+        response.setStatus(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR);
+        response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
+        response.send().write(e.displayText().c_str(), e.displayText().length());
+        logger.error("Erro no processo de verificação de arquivo: %s", e.displayText());
     } catch (std::exception& e) {
         response.setStatus(Poco::Net::HTTPServerResponse::HTTP_INTERNAL_SERVER_ERROR);
         response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
         response.send().write(e.what(), std::strlen(e.what()));
+        logger.error("Erro no processo de verificação de arquivo: %s", std::string(e.what()));
     }
 }
 

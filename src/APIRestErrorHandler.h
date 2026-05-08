@@ -15,6 +15,8 @@ public:
     void exception(const Poco::Exception& e) override;
     void exception(const std::exception& e) override;
     void exception() override;
+private:
+    std::string get_demangled_class_name(const char* name) const;
 };
 
 #endif /* SRC_APIRESTERRORHANDLER_H_ */
