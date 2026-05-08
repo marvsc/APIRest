@@ -39,7 +39,7 @@ private:
     APIRestFilePartHandler file_part_handler_;
     std::map<std::string, std::string> arquivos_;
 
-    const Poco::Net::HTMLForm get_form_data(Poco::Net::HTTPServerRequest& request);
+    Poco::Net::HTMLForm* get_form_data(Poco::Net::HTTPServerRequest& request);
 };
 
 } /* namespace Route */

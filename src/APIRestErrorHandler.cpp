@@ -9,7 +9,7 @@
 
 #include <Poco/Logger.h>
 
-#define APPLICATION_LOGGER_NAME "APIRestLogger"
+#define APPLICATION_LOGGER_NAME "splitter"
 
 void APIRestErrorHandler::exception(const Poco::Exception& e) {
     Poco::Logger::get(APPLICATION_LOGGER_NAME).warning("Erro disparado pela libpoco na thread: %s", e.displayText());

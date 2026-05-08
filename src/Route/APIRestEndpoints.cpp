@@ -29,11 +29,11 @@ static Poco::Logger& logger = Poco::Logger::get("APIRestEndpoints");
 
 void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
     try {
-        Poco::Net::HTMLForm form(get_form_data(request));
+        std::unique_ptr<Poco::Net::HTMLForm> form(get_form_data(request));
         std::string certificate(arquivos_.at(CERTIFICATE));
         std::string file_to_assign(arquivos_.at(FILE_TO_ASSIGN));
         logger.debug("Assinando arquivo %s com o certificado %s", file_to_assign, certificate);
-        CMSSigner signer(file_to_assign, certificate, form.get(PASSWORD));
+        CMSSigner signer(file_to_assign, certificate, form->get(PASSWORD));
         std::string body(signer.assign());
         response.setStatus(Poco::Net::HTTPServerResponse::HTTP_OK);
         response.setContentType(CONTENT_TYPE_PLAIN_TEXT);
@@ -48,11 +48,11 @@ void APIRestEndpoints::signature(Poco::Net::HTTPServerRequest& request, Poco::Ne
 
 void APIRestEndpoints::verify(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
     try {
-        Poco::Net::HTMLForm form(get_form_data(request));
+        std::unique_ptr<Poco::Net::HTMLForm> form(get_form_data(request));
         std::string certificate(arquivos_.at(CERTIFICATE));
         std::string file_to_verify(arquivos_.at(FILE_TO_VERIFY));
         logger.debug("Verificando assinatura do arquivo %s com o certificado %s", file_to_verify, certificate);
-        SignatureRetriever signature_retriever(certificate, form.get(PASSWORD), file_to_verify);
+        SignatureRetriever signature_retriever(certificate, form->get(PASSWORD), file_to_verify);
         Poco::JSON::Object body;
         if (signature_retriever.verify()) {
             body.set(STATUS, VALID);
@@ -74,12 +74,12 @@ void APIRestEndpoints::verify(Poco::Net::HTTPServerRequest& request, Poco::Net::
     }
 }
 
-const Poco::Net::HTMLForm APIRestEndpoints::get_form_data(Poco::Net::HTTPServerRequest& request) {
-    Poco::Net::HTMLForm form(request, request.stream(), file_part_handler_);
-    if (!form.empty()) {
+Poco::Net::HTMLForm* APIRestEndpoints::get_form_data(Poco::Net::HTTPServerRequest& request) {
+    Poco::Net::HTMLForm* form = new Poco::Net::HTMLForm(request, request.stream(), file_part_handler_);
+    if (!form->empty()) {
         logger.debug("Campos do formulário:");
     }
-    for (auto const& entry : form) {
+    for (auto const& entry : *form) {
         logger.debug("%s : %s", entry.first, entry.second);
     }
     return form;

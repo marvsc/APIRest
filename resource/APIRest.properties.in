@@ -1,7 +1,6 @@
 ; Root log
 logging.loggers.root.level = debug
 logging.loggers.root.channel = splitter
-logging.loggers.root.name = APIRestLogger
 
 ; Pattern formatter
 logging.formatters.patternformatter.class = PatternFormatter
