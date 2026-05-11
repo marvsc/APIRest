@@ -6,12 +6,15 @@ from conan.tools.build import can_run
 
 class apirestTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
+    generators = "CMakeDeps", "CMakeToolchain"
 
     def requirements(self):
         self.requires(self.tested_reference_str)
         self.requires("assinaturadigital/[>v0.1.15]")
-        self.requires("verificaassinatura/[>=v0.3.6]")
+        self.requires("verificaassinatura/[>=v0.1.7]")
+        self.requires("openssl/[>3.5.0]")
         self.requires("cppunit/[>=1.15.1]")
+        self.requires("poco/[>1.11.0]")
     
     def build(self):
         cmake = CMake(self)
