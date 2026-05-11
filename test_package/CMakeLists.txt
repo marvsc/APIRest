@@ -8,11 +8,12 @@ find_package(OpenSSL CONFIG REQUIRED)
 find_package(cppunit CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED)
 
-add_executable(teste src/teste.cpp)
+add_executable(teste src/teste.cpp
+                    src/UnitTests/src/APIRestServerTest.cpp)
 target_link_libraries(teste
-Poco::Poco
-openssl::openssl
-verificaassinatura::verificaassinatura
-cppunit::cppunit
-assinaturadigital::assinaturadigital)
+    Poco::Poco
+    openssl::openssl
+    verificaassinatura::verificaassinatura
+    cppunit::cppunit
+    assinaturadigital::assinaturadigital)
 
