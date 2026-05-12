@@ -87,7 +87,7 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
     Poco::Net::SSLManager::instance().initializeServer(nullptr, nullptr, context);
     set_port(DEFAULT_PORT);
     set_router(new APIRestRequestHandlerFactory(config().getString(Configuration::APIRestConfigurationKeys::APIREST_UPLOAD_DIR)));
-    auto http_server_params = new Poco::Net::HTTPServerParams();
+    Poco::Net::HTTPServerParams::Ptr http_server_params = new Poco::Net::HTTPServerParams;
     http_server_params->setMaxQueued(MAX_QUEUED);
     http_server_params->setMaxThreads(MAX_THREADS);
     Poco::Net::HTTPServer http_server(get_router(),

@@ -13,10 +13,16 @@
 #include <Poco/Net/HTTPRequestHandler.h>
 #include <Poco/Net/StreamSocket.h>
 #include <Poco/Net/HTTPServerSession.h>
+#include <Poco/Net/SocketAddress.h>
+#include <Poco/Net/ServerSocket.h>
+#include <Poco/Net/HTTPServer.h>
+#include <Poco/Net/HTTPClientSession.h>
 
 #include "../../../../src/APIRestRequestHandlerFactory.h"
 
 #define BUFFER_SIZE 256
+#define LOCAL_IP "127.0.0.1"
+#define DEFAULT_PORT 9000
 
 #define PRINTF_MESSAGE(format, ...) \
     ([&]() { \
@@ -30,10 +36,30 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(APIRestServerTest);
 
 void APIRestServerTest::teste_rota_signature() {
-    Poco::Net::StreamSocket streamSocket;
-    Poco::Net::HTTPServerSession session(streamSocket, nullptr);
+    // TODO:
+    // Instanciar o request handler factory
+    Poco::Net::HTTPRequestHandlerFactory::Ptr router(new APIRestRequestHandlerFactory("."));
+    // Instanciar o http server
+    Poco::Net::HTTPServerParams::Ptr http_server_params = new Poco::Net::HTTPServerParams;
+    // Iniciar o http server
+    Poco::Net::HTTPServer http_server(router, Poco::Net::ServerSocket(Poco::UInt16(DEFAULT_PORT)), http_server_params);
+    // Instanciar o http client session
+    Poco::Net::HTTPClientSession session(LOCAL_IP, Poco::UInt16(DEFAULT_PORT));
+    // Instanciar o http request
+    // Preencher o header do request
+    // Instanciar o html form
+    // Preencher o form data
+    // Submeter o form data ao request
+    // Enviar o request
+    // Obter o response
+    // Validar response
+    Poco::Net::SocketAddress socket_address(LOCAL_IP, DEFAULT_PORT);
+    Poco::Net::ServerSocket server_socket(socket_address);
+    Poco::Net::StreamSocket client_socket;
+    client_socket.connect(socket_address);
+    Poco::Net::HTTPServerSession session(server_socket.acceptConnection(), new Poco::Net::HTTPServerParams);
     Poco::Net::HTTPServerResponseImpl response(session);
-    Poco::Net::HTTPServerRequestImpl request(response, session, nullptr);
+    Poco::Net::HTTPServerRequestImpl request(response, session, new Poco::Net::HTTPServerParams);
     request.setMethod(Poco::Net::HTTPServerRequest::HTTP_POST);
     request.setURI("/signature");
     Poco::Net::HTMLForm form;
@@ -51,6 +77,18 @@ void APIRestServerTest::teste_rota_signature() {
 }
 
 void APIRestServerTest::teste_rota_verify() {
-
+    // TODO:
+    // Instanciar o request handler factory
+    // Instanciar o http server
+    // Iniciar o http server
+    // Instanciar o http client session
+    // Instanciar o http request
+    // Preencher o header do request
+    // Instanciar o html form
+    // Preencher o form data
+    // Submeter o form data ao request
+    // Enviar o request
+    // Obter o response
+    // Validar response
 }
 
