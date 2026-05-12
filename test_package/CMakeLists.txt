@@ -9,11 +9,15 @@ find_package(cppunit CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED)
 
 add_executable(teste src/teste.cpp
-                    src/UnitTests/src/APIRestServerTest.cpp)
+                    src/UnitTests/src/APIRestServerTest.cpp
+                    ../src/APIRestRequestHandlerFactory.cpp
+                    ../src/Route/APIRestEndpoints.cpp
+                    ../src/Route/APIRestFilePartHandler.cpp
+                    ../src/Route/APIRestRequestHandler.cpp)
 target_link_libraries(teste
-    Poco::Poco
-    openssl::openssl
-    verificaassinatura::verificaassinatura
-    cppunit::cppunit
-    assinaturadigital::assinaturadigital)
+                            Poco::Poco
+                            openssl::openssl
+                            verificaassinatura::verificaassinatura
+                            cppunit::cppunit
+                            assinaturadigital::assinaturadigital)
 

@@ -11,6 +11,8 @@
 #include <Poco/Net/FilePartSource.h>
 #include <Poco/Net/HTTPServerResponseImpl.h>
 #include <Poco/Net/HTTPRequestHandler.h>
+#include <Poco/Net/StreamSocket.h>
+#include <Poco/Net/HTTPServerSession.h>
 
 #include "../../../../src/APIRestRequestHandlerFactory.h"
 
@@ -23,12 +25,16 @@
             return std::string(buffer); \
     }())
 
-#define CONTENT_TYPE_PLAIN_TEXT "text/plain; charset=utf-8";
+#define CONTENT_TYPE_PLAIN_TEXT "text/plain; charset=utf-8"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(APIRestServerTest);
 
 void APIRestServerTest::teste_rota_signature() {
-    Poco::Net::HTTPServerRequestImpl request;
+    Poco::Net::StreamSocket streamSocket;
+    Poco::Net::HTTPServerSession session(streamSocket, nullptr);
+    Poco::Net::HTTPServerResponseImpl response(session);
+    Poco::Net::HTTPServerRequestImpl request(response, session, nullptr);
+    request.setMethod(Poco::Net::HTTPServerRequest::HTTP_POST);
     request.setURI("/signature");
     Poco::Net::HTMLForm form;
     form.setEncoding(Poco::Net::HTMLForm::ENCODING_MULTIPART);
@@ -36,12 +42,15 @@ void APIRestServerTest::teste_rota_signature() {
     form.addPart("Certificate", new Poco::Net::FilePartSource("certificado_teste_hub.pfx"));
     form.add("Password", "bry123456");
     form.prepareSubmit(request);
-    Poco::Net::HTTPServerResponseImpl response;
     APIRestRequestHandlerFactory factory("upload");
     std::unique_ptr<Poco::Net::HTTPRequestHandler> handler(factory.createRequestHandler(request));
     handler->handleRequest(request, response);
     CPPUNIT_ASSERT_MESSAGE(PRINTF_MESSAGE("Status [%d], Reason [%s]", response.getStatus(), response.getReason().c_str()), response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK);
     CPPUNIT_ASSERT_MESSAGE(PRINTF_MESSAGE("Content type %s incorreto", response.getContentType().c_str()), response.getContentType() == CONTENT_TYPE_PLAIN_TEXT);
     CPPUNIT_ASSERT_MESSAGE("Não retornou o conteúdo da assinatura em base 64", response.getContentLength() > 0);
+}
+
+void APIRestServerTest::teste_rota_verify() {
+
 }
 

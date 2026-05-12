@@ -19,7 +19,7 @@ class apirestTestConan(ConanFile):
     def build(self):
         cmake = CMake(self)
         cmake.configure()
-        cmake.build
+        cmake.build()
         
     def layout(self):
         cmake_layout(self)
