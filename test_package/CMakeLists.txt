@@ -21,3 +21,10 @@ target_link_libraries(teste
                             cppunit::cppunit
                             assinaturadigital::assinaturadigital)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/certificado_teste_hub.pfx
+${CMAKE_CURRENT_BINARY_DIR}/certificado_teste_hub.pfx
+COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/doc.txt
+${CMAKE_CURRENT_BINARY_DIR}/doc.txt
+COPYONLY)
+

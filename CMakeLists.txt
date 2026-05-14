@@ -20,7 +20,6 @@ install(TARGETS apirest DESTINATION "."
         LIBRARY DESTINATION lib
         )
 
-set(CONFIGURE_PATH /home/marcus.chaves/pessoal/teste)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/resource/APIRest.properties.in
     conf/APIRest.properties
@@ -28,6 +27,5 @@ configure_file(
 )
 
 install(FILES
-            ${CMAKE_CURRENT_SOURCE_DIR}/resource/certificado_teste_hub.pfx
             ${CMAKE_BINARY_DIR}/conf/APIRest.properties
         DESTINATION conf/)
