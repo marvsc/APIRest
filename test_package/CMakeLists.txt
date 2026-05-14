@@ -22,9 +22,12 @@ target_link_libraries(teste
                             assinaturadigital::assinaturadigital)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/certificado_teste_hub.pfx
-${CMAKE_CURRENT_BINARY_DIR}/certificado_teste_hub.pfx
+${CMAKE_CURRENT_BINARY_DIR}/certificados/certificado_teste_hub.pfx
 COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/doc.txt
-${CMAKE_CURRENT_BINARY_DIR}/doc.txt
+${CMAKE_CURRENT_BINARY_DIR}/arquivos/doc.txt
+COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/signature.p7s
+${CMAKE_CURRENT_BINARY_DIR}/assinaturas/signature.p7s
 COPYONLY)
 

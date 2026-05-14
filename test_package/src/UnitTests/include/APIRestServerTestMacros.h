@@ -12,16 +12,20 @@
 #define LOCAL_IP "127.0.0.1"
 #define DEFAULT_PORT 9000
 #define SIGNATURE_PATH "/signature"
+#define VERIFY_PATH "/verify"
 #define UPLOAD_PATH "."
 #define FILE_TO_ASSIGN "File-To-Assign"
-#define FILE_TO_ASSIGN_PATH "doc.txt"
+#define FILE_TO_ASSIGN_PATH "arquivos/doc.txt"
+#define FILE_TO_VERIFY "File-To-Verify"
+#define FILE_TO_VERIFY_PATH "assinaturas/signature.p7s"
 #define CERTIFICATE "Certificate"
-#define CERTIFICATE_PATH "certificado_teste_hub.pfx"
+#define CERTIFICATE_PATH "certificados/certificado_teste_hub.pfx"
 #define PASSWORD "Password"
 #define AES_KEY "b90XmFVR51L485rxXXCRhupVxva0yDFh"
 #define AES_INITIALIZATION_VECTOR "NSVmgGXSm2jRTiyq"
 #define PKCS12_ENVVAR_PASSWORD "PKCS12_ENVVAR_PASSWORD"
 #define CONTENT_TYPE_PLAIN_TEXT "text/plain; charset=utf-8"
+#define CONTENT_TYPE_JSON "application/json"
 
 #define PRINTF_MESSAGE(format, ...) \
     ([&]() { \
