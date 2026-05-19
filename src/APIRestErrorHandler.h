@@ -17,6 +17,8 @@ public:
     void exception() override;
 private:
     std::string get_demangled_class_name(const char* name) const;
+
+    friend class APIRestErrorHandlerTest;
 };
 
 #endif /* SRC_APIRESTERRORHANDLER_H_ */

@@ -25,9 +25,7 @@
 #include <Poco/Net/SecureServerSocket.h>
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/PropertyFileConfiguration.h>
-#include <Poco/Crypto/Crypto.h>
 #include <Poco/Crypto/PKCS12Container.h>
-#include <Poco/Crypto/RSACipherImpl.h>
 
 #define MAX_QUEUED 250
 #define MAX_THREADS 50

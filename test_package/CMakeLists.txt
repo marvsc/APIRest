@@ -9,8 +9,10 @@ find_package(cppunit CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED)
 
 add_executable(teste src/teste.cpp
+                    src/UnitTests/src/APIRestErrorHandlerTest.cpp
                     src/UnitTests/src/APIRestServerTest.cpp
                     ../src/APIRestRequestHandlerFactory.cpp
+                    ../src/APIRestErrorHandler.cpp
                     ../src/Route/APIRestEndpoints.cpp
                     ../src/Route/APIRestFilePartHandler.cpp
                     ../src/Route/APIRestRequestHandler.cpp)
