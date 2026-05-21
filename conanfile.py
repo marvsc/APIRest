@@ -7,7 +7,7 @@ class apirestRecipe(ConanFile):
     package_type = "application"
 
     # Optional metadata
-    license = ""
+    license = "GPL-3.0-only"
     author = "Marcus Chaves"
     url = "git@github.com:marvsc/APIRest.git"
     description = "TODO"
