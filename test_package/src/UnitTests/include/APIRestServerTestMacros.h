@@ -1,8 +1,8 @@
 /*
- * APIRestServerTestMacros.h
- *
- *  Created on: 14 de mai. de 2026
- *      Author: marcus.chaves
+ * @file APIRestServerTestMacros.h
+ * @brief Macros necessárias para execução de testes
+ * @author Marcus Chaves
+ * @date 2026-01-27
  */
 
 #ifndef TEST_PACKAGE_SRC_UNITTESTS_INCLUDE_APIRESTSERVERTESTMACROS_H_
@@ -26,7 +26,9 @@
 #define PKCS12_ENVVAR_PASSWORD "PKCS12_ENVVAR_PASSWORD"
 #define CONTENT_TYPE_PLAIN_TEXT "text/plain; charset=utf-8"
 #define CONTENT_TYPE_JSON "application/json"
+#define CLASS_NAME "APIRestErrorHandlerTest"
 
+// Macro para criação de mensagem de erro
 #define PRINTF_MESSAGE(format, ...) \
     ([&]() { \
             char buffer[BUFFER_LENGTH]; \
