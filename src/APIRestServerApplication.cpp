@@ -143,7 +143,10 @@ int APIRestServerApplication::main(const std::vector<std::string> &args) {
 }
 
 void APIRestServerApplication::defineOptions(Poco::Util::OptionSet& options) {
+    // Define as opções default da aplicação
     ServerApplication::defineOptions(options);
+
+    // Adiciona a opção para definir o caminho para o arquivo de configuração
     options.addOption(
             Poco::Util::Option("config", "c", "Specify a configuration file path")
                 .required(false)
@@ -159,6 +162,8 @@ void APIRestServerApplication::handleConfiguration(const std::string& name, cons
             return;
         }
         Poco::Util::PropertyFileConfiguration::Ptr configuration(new Poco::Util::PropertyFileConfiguration(value));
+
+        // Adiciona nas configurações o valor da opção que foi definida por parâmetro na execução da aplicação.
         config().add(configuration, Poco::Util::Application::PRIO_APPLICATION + 1);
     } catch (Poco::Exception& e) {
         std::printf("Erro definindo configuração: %s\n", e.displayText().c_str());

@@ -1,9 +1,3 @@
-/*
- * MyErrorHandler.cpp
- *
- *  Created on: Apr 27, 2026
- *      Author: marcus
- */
 
 #include "APIRestErrorHandler.h"
 
@@ -25,6 +19,8 @@ void APIRestErrorHandler::exception() {
 
 std::string APIRestErrorHandler::get_demangled_class_name(const char* name) const {
     int status = 0;
+
+    // Desmancha o nome da classe.
     char* demangled = abi::__cxa_demangle(name, nullptr, nullptr, &status);
     std::string result = !status ? demangled : name;
     std::free(demangled);
