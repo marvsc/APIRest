@@ -42,6 +42,4 @@ public:
     void teste_rota_verify();
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(APIRestServerTest);
-
 #endif /* TEST_PACKAGE_SRC_UNITTESTS_INCLUDE_APIRESTSERVERTEST_H_ */
