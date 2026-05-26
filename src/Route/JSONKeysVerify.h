@@ -1,8 +1,8 @@
 /*
- * JSONKeysVerify.h
- *
- *  Created on: 5 de mai. de 2026
- *      Author: marcus.chaves
+ * @file JSONKeysVerify.h
+ * @brief Macros que definem o nome das chaves do JSON de retorno
+ * @author Marcus Chaves
+ * @date 2026-10-27
  */
 
 #ifndef SRC_ROUTE_JSONKEYSVERIFY_H_
