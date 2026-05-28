@@ -152,6 +152,71 @@ O canal de log é definido através da seguinte chave de configuração:
 logging.loggers.root.channel = splitter
 ```
 
+As seguintes chaves correspondem a definição do tipo de formatter e o padrão utilizado pelo formatter:
+
+```
+logging.formatters.patternformatter.class = PatternFormatter
+logging.formatters.patternformatter.pattern = %Y-%m-%d %H:%M:%S.%i [%p] - %s - %t
+```
+
+Para definir e configurar os canais os canais de log, é necessário utilizar as chaves correspondentes a seguinte:
+
+```
+logging.channels.<nome do canal>.*
+```
+
+Deve ser definido o tipo e suas configurações. O canal definido deve ser associado ao log principal.
+
+O diretório onde os arquivos recebidos pelo servidor serão salvos deve ser definido na seguinte chave:
+
+```
+apirest.upload.dir = /tmp/apirest/uploads
+```
+
+As seguintes chaves correspondem ao caminho para o arquivo PKCS12 utilizado pelo servidor para fazer uma verificação rigorosa da conexão e a senha para acesso ao conteúdo desse arquivo:
+
+```
+apirest.pkcs12.path = 
+apirest.pkcs12.password.aes.256.cbc.base64 = 
+```
+
+A senha deve ser criptografada a seção 2 dos [Passos para a compilação](#-passos-para-a-compilação).
+O arquivo PKCS 12 deve ser gerado seguindo os passos a seguir:
+
+### Gerar arquivo PKCS12
+
+Gerar chave privada da autoridade certificadora:
+
+```bash
+openssl genrsa -out ca-key.pem 4096
+```
+
+Gerar certificado da autoridade certificadora:
+
+```bash
+openssl req -new -x509 -days 3650 -keyout ca-key.pem -out ca-cert.pem -subj "/C=BR/ST=Sao Paulo/L=Sao Paulo/O=Minha Organizacao/CN=minha-ca.com.br" -addext "basicConstraints=critical,CA:TRUE" -addext "keyUsage=critical,keyCertSign,cRLSign" -addext "subjectAltName=DNS:minha-ca.com.br,IP:192.168.1.1"
+```
+
+Gerar chave privada do servidor:
+
+```bash
+openssl genrsa -out server-key.pem 4096
+```
+
+Gerar requisição de assinatura do servidor:
+
+```bash
+openssl req -new -keyout server-key.pem -out server.csr -subj "/C=BR/ST=Sao Paulo/L=Sao Paulo/O=Minha Organizacao/CN=servidor.minha-ca.com.br" -addext "subjectAltName=DNS:servidor.minha-ca.com.br,IP:192.168.1.100" -addext "keyUsage=critical,digitalSignature,keyEncipherment" -addext "extendedKeyUsage=serverAuth"
+```
+
+Assinar certificado do servidor com a autoridade certificadora:
+
+```bash
+openssl x509 -req -in server.csr -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -days 365 -sha256 -extfile <(echo "subjectAltName=DNS:servidor.minha-ca.com.br,IP:192.168.1.100")
+```
+
+O mesmo processo do servidor deve ser feito para o cliente.
+
 ## ✅ Como usar
 
 Executar o apirest passando o arquivo de configuração como parâmetro:

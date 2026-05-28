@@ -21,7 +21,7 @@ logging.channels.file.rotation = 10 M
 logging.channels.file.archive = number
 logging.channels.file.times = local
 logging.channels.file.compress = true
-logging.channles.file.purgeAge = 1 month
+logging.channels.file.purgeAge = 1 month
 logging.channels.file.purgeCount = 100
 logging.channels.file.flush = false
 logging.channels.file.formatter = patternformatter
@@ -33,4 +33,4 @@ logging.channels.splitter.channel = console, file
 ; API Rest
 apirest.upload.dir = /tmp/apirest/uploads
 apirest.pkcs12.path = 
-apirest.pkcs12.password.aes.256.cbc.base64 = dKSJy+f3FMjtyG1ynWG2fg==
+apirest.pkcs12.password.aes.256.cbc.base64 = 
