@@ -138,34 +138,7 @@ O arquivo de configuração é gerado durante a compilação no diretório conf/
 
 ### Chaves de configuração
 
-O nível de log pode ser definido com os valores none, fatal, critical, error, warning, notice, information, debug, trace através da seguinte configuração:
-
-```
-logging.loggers.root.level = debug
-```
-
-Sendo que none desativa o log e trace é a informação mais detalhada possível.
-
-O canal de log é definido através da seguinte chave de configuração:
-
-```
-logging.loggers.root.channel = splitter
-```
-
-As seguintes chaves correspondem a definição do tipo de formatter e o padrão utilizado pelo formatter:
-
-```
-logging.formatters.patternformatter.class = PatternFormatter
-logging.formatters.patternformatter.pattern = %Y-%m-%d %H:%M:%S.%i [%p] - %s - %t
-```
-
-Para definir e configurar os canais os canais de log, é necessário utilizar as chaves correspondentes a seguinte:
-
-```
-logging.channels.<nome do canal>.*
-```
-
-Deve ser definido o tipo e suas configurações. O canal definido deve ser associado ao log principal.
+As configurações de log utilizam a especificação da [libpoco](https://docs.pocoproject.org/current/Poco.Util.LoggingConfigurator.html). As configurações específicas da APIRest seguem abaixo:
 
 O diretório onde os arquivos recebidos pelo servidor serão salvos deve ser definido na seguinte chave:
 
