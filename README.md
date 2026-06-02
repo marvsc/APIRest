@@ -153,40 +153,50 @@ apirest.pkcs12.path =
 apirest.pkcs12.password.aes.256.cbc.base64 = 
 ```
 
-A senha deve ser criptografada a seção 2 dos [Passos para a compilação](#-passos-para-a-compilação).
+A senha deve ser criptografada conforme a seção 2 dos [Passos para a compilação](#-passos-para-a-compilação).
 O arquivo PKCS 12 deve ser gerado seguindo os passos a seguir:
 
-### Gerar arquivo PKCS12
+#### Passos para gerar arquivo PKCS12
 
-Gerar chave privada da autoridade certificadora:
-
-```bash
-openssl genrsa -out ca-key.pem 4096
-```
-
-Gerar certificado da autoridade certificadora:
+1. Gerar chave privada da autoridade certificadora:
 
 ```bash
-openssl req -new -x509 -days 3650 -keyout ca-key.pem -out ca-cert.pem -subj "/C=BR/ST=Sao Paulo/L=Sao Paulo/O=Minha Organizacao/CN=minha-ca.com.br" -addext "basicConstraints=critical,CA:TRUE" -addext "keyUsage=critical,keyCertSign,cRLSign" -addext "subjectAltName=DNS:minha-ca.com.br,IP:192.168.1.1"
+openssl genrsa -out <nome da chave>.pem 4096
 ```
 
-Gerar chave privada do servidor:
+> [!NOTE] Esse arquivo deve ser gerado na máquina que será utilizada como autoridade certificadora.
+
+2. Gerar certificado da autoridade certificadora:
 
 ```bash
-openssl genrsa -out server-key.pem 4096
+openssl req -new -x509 -keyout <nome da chave>.pem -out <nome do certificado>.pem -subj "/CN=<nome da máquina>" -addext "basicConstraints=critical,CA:TRUE" -addext "keyUsage=critical,keyCertSign,cRLSign" -addext "subjectAltName=DNS:minha-ca.com.br,IP:192.168.1.1"
 ```
 
-Gerar requisição de assinatura do servidor:
+> [!NOTE] O certificado da autoridade certificadora deve ser gerado com common name e subject alternative name definidos além de basic constraints critical e CA e keyusage critival, key cert sign e crl sign para não passar na verificação rigorosa. O common name deve ser o nome da máquina obtido com o comando hostname e o subject alternative name deve ter dns como o nome da máquina também e ip sendo o ip da máquina.
+
+3. Gerar chave privada do servidor:
 
 ```bash
-openssl req -new -keyout server-key.pem -out server.csr -subj "/C=BR/ST=Sao Paulo/L=Sao Paulo/O=Minha Organizacao/CN=servidor.minha-ca.com.br" -addext "subjectAltName=DNS:servidor.minha-ca.com.br,IP:192.168.1.100" -addext "keyUsage=critical,digitalSignature,keyEncipherment" -addext "extendedKeyUsage=serverAuth"
+openssl genrsa -out <nome da chave>.pem 4096
 ```
 
-Assinar certificado do servidor com a autoridade certificadora:
+> [!NOTE] A chave privada do servidor deve ser gerada na máquina que será usada como servidor.
+
+4. Gerar requisição de assinatura do servidor:
 
 ```bash
-openssl x509 -req -in server.csr -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -days 365 -sha256 -extfile <(echo "subjectAltName=DNS:servidor.minha-ca.com.br,IP:192.168.1.100")
+openssl req -new -keyout <nome da chave>.pem -out <nome da requisição>.csr -subj "/CN=servidor.minha-ca.com.br" -addext "subjectAltName=DNS:servidor.minha-ca.com.br,IP:192.168.1.100" -addext "keyUsage=critical,digitalSignature,keyEncipherment" -addext "extendedKeyUsage=serverAuth"
 ```
+
+> [!NOTE] A requsiição de assinatura do servidor deve ser criada com o common name sendo o nome do servidor, subject alternative name sendo o nome do servidor como dns e o ip do servidor como ip além de key usage critical, digital signature e key encipherment e extended key usage server auth.
+
+5. Assinar certificado do servidor com a autoridade certificadora:
+
+```bash
+openssl x509 -req -in <nome da requisição>.csr -CA <certificado da autoridade certificadora>.pem -CAkey <chave da autoridade certificadora>.pem -CAcreateserial -out <nome do certificado>.pem -sha256 -extfile <(echo "subjectAltName=DNS:servidor.minha-ca.com.br,IP:192.168.1.100")
+```
+
+> [!NOTE] O certificado do servidor deve ser gerado a partir de uma requisição de assinatura utilizando o certificado e chave da autoridade certificadora para assinar esse certificado. Além disso, ja deve ser passado o subject alternative name sendo o nome do servidor como dns e o ip do servidor como ip.
 
 O mesmo processo do servidor deve ser feito para o cliente.
 
