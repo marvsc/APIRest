@@ -55,7 +55,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake \
             -DCMAKE_CXX_FLAGS="${SAN_FLAGS}" \
             -DCMAKE_EXE_LINKER_FLAGS="${LINK_FLAGS}" \
-            -DCMAKE_SHARED_LINKER_FLAGS="${LINK_FLAGS}" \
+            -DCMAKE_SHARED_LINKER_FLAGS="${LINK_FLAGS}"
           cmake --build test_package/build -- -j$(nproc)
 
           # Executa os testes unitários com os sanitizers habilitados
