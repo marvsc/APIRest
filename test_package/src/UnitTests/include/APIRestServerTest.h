@@ -26,6 +26,21 @@ class APIRestServerTest: public CppUnit::TestFixture {
 public:
 
     /*
+     * @brief Configura o ambiente de teste antes de cada teste
+     */
+    void setUp() override;
+
+    /*
+     * @brief Limpa o ambiente de teste após cada teste
+     */
+    void tearDown() override;
+
+    /*
+     * @brief Limpa o ambiente de teste após todos os testes
+     */
+    static void tearDownSuite();
+
+    /*
      * @brief Testa a rota signature.
      *          Esse teste não representa o real conceito de teste unitário
      *          porque não testa a menor parcela possível de uma funcionalidade,
