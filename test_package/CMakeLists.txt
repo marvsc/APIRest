@@ -6,7 +6,7 @@ find_package(assinaturadigital CONFIG REQUIRED)
 find_package(verificaassinatura CONFIG REQUIRED)
 find_package(OpenSSL CONFIG REQUIRED)
 find_package(cppunit CONFIG REQUIRED)
-find_package(Poco CONFIG REQUIRED)
+find_package(Poco CONFIG REQUIRED COMPONENTS Foundation Net Util JSON)
 
 add_executable(teste src/teste.cpp
                     src/UnitTests/src/APIRestErrorHandlerTest.cpp
@@ -17,7 +17,10 @@ add_executable(teste src/teste.cpp
                     ../src/Route/APIRestFilePartHandler.cpp
                     ../src/Route/APIRestRequestHandler.cpp)
 target_link_libraries(teste
-                            Poco::Poco
+                            Poco::Foundation
+                            Poco::Net
+                            Poco::Util
+                            Poco::JSON
                             openssl::openssl
                             verificaassinatura::verificaassinatura
                             cppunit::cppunit

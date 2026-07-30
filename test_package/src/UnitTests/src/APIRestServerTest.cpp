@@ -23,6 +23,24 @@
 // Registra o suite de testes
 CPPUNIT_TEST_SUITE_REGISTRATION(APIRestServerTest);
 
+void APIRestServerTest::setUp() {
+    // Inicializa a biblioteca de criptografia do Poco
+    Poco::Crypto::initializeCrypto();
+}
+
+void APIRestServerTest::tearDown() {
+    // Finaliza a biblioteca de criptografia do Poco
+    Poco::Crypto::uninitializeCrypto();
+
+    // Limpa a pilha de erros do OpenSSL para evitar vazamento de memória
+    ERR_clear_error();
+}
+
+void APIRestServerTest::tearDownSuite() {
+    // Finaliza a biblioteca de criptografia do OpenSSL
+    OPENSSL_cleanup();
+}
+
 void APIRestServerTest::teste_rota_signature() {
     // Instancia o roteador
     Poco::Net::HTTPRequestHandlerFactory::Ptr router(new APIRestRequestHandlerFactory(UPLOAD_PATH));

@@ -133,6 +133,8 @@ Servidor REST que expõe duas rotas para serviços de criptografia. Uma rota tem
 > O comando acima vai baixar e compilar todas as dependencias, compilar o projeto e executar os testes que é composto de 1 executáveil que faz os testes unitários.
 
 ## 🤞 Pipeline
+Os commits diretos no branch main do projeto estão bloqueados, portanto é necessário criar um branch a partir do main para commitar alterações e ao fim abrir um merge request. O merge request é validado por três pipeline que compila o projeto usando sanitizers ASAN, UBSAN e TSAN e executa o teste unitário. O merge só será liberado se essas pipelines passarem.
+
 Ao criar uma tag, duas pipelines são disparadas via github para gerar a release automaticamente e para publicar o pacote no repositório do conan (cloudsmith).
 
 ## 🔩 Configuração

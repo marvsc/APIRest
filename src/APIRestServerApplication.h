@@ -27,23 +27,20 @@ public:
     /*
      * @brief Constrói a classe definindo a porta padrão para conexão.
      */
-    APIRestServerApplication() :
-            port_(DEFAULT_PORT) {}
+    APIRestServerApplication();
 
     /*
      * @brief Constrói a classe passando a porta de conexão do servidor.
      *
      * @param[in] port Porta de conexão do servidor
      */
-    APIRestServerApplication(int port) :
-            port_(port) {}
+    APIRestServerApplication(int port);
 
     /*
      * @brief Destrói a classe
      */
-    ~APIRestServerApplication() override {
-        router_.reset();
-    }
+    ~APIRestServerApplication() override;
+
 protected:
 
     /*

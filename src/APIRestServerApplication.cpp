@@ -36,6 +36,29 @@
 // Vetor de inicialização AES 256 CBC utilizado para descriptografar a senha do arquivo PKCS12
 #define AES_INITIALIZATION_VECTOR "NSVmgGXSm2jRTiyq"
 
+APIRestServerApplication::APIRestServerApplication() : port_(DEFAULT_PORT) {
+    // Inicializa a biblioteca de criptografia do Poco
+    Poco::Crypto::initializeCrypto();
+}
+
+APIRestServerApplication::APIRestServerApplication(int port) : port_(port) {
+    // Inicializa a biblioteca de criptografia do Poco
+    Poco::Crypto::initializeCrypto();
+}
+
+APIRestServerApplication::~APIRestServerApplication() {
+    router_.reset();
+
+    // Finaliza a biblioteca de criptografia do Poco
+    Poco::Crypto::uninitializeCrypto();
+
+    // Limpa a pilha de erros do OpenSSL para evitar vazamento de memória
+    ERR_clear_error();
+
+    // Finaliza a biblioteca de criptografia do OpenSSL
+    OPENSSL_cleanup();
+}
+
 void APIRestServerApplication::initialize(Poco::Util::Application& self) {
     try {
         // Carrega o arquivo de configurações
