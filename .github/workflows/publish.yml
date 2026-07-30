@@ -40,7 +40,7 @@ jobs:
            run: |
               mkdir -p build/package/bin/
               cp build/apirest build/package/bin/
-              cp -r conf/ build/package/
+              cp -r build/conf/ build/package/
 
          - name: Get tag name from GITHUB_REF
            id: get_tag_name
